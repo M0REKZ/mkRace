@@ -545,7 +545,7 @@ void CCharacter::HandleWeapons()
 			if((Server()->Tick() - m_aWeapons[m_ActiveWeapon].m_AmmoRegenStart) >= AmmoRegenTime * Server()->TickSpeed() / 1000)
 			{
 				// Add some ammo
-				m_aWeapons[m_ActiveWeapon].m_Ammo = min(m_aWeapons[m_ActiveWeapon].m_Ammo + 1,
+				m_aWeapons[m_ActiveWeapon].m_Ammo = minimum(m_aWeapons[m_ActiveWeapon].m_Ammo + 1,
 					g_pData->m_Weapons.m_aId[m_ActiveWeapon].m_Maxammo);
 				m_aWeapons[m_ActiveWeapon].m_AmmoRegenStart = -1;
 			}
@@ -565,7 +565,7 @@ bool CCharacter::GiveWeapon(int Weapon, int Ammo)
 	{
 		m_aWeapons[Weapon].m_Got = true;
 		if(!m_FreezeTime)
-			m_aWeapons[Weapon].m_Ammo = min(g_pData->m_Weapons.m_aId[Weapon].m_Maxammo, Ammo);
+			m_aWeapons[Weapon].m_Ammo = minimum(g_pData->m_Weapons.m_aId[Weapon].m_Maxammo, Ammo);
 		return true;
 	}
 	return false;
