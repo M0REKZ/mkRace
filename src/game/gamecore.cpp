@@ -84,6 +84,7 @@ void CCharacterCore::Reset()
 	m_Pos = vec2(0,0);
 	m_Vel = vec2(0,0);
 	m_NewHook = false;
+	m_InteractVel = vec2(0,0);
 	m_HookPos = vec2(0,0);
 	m_HookDir = vec2(0,0);
 	m_HookTick = 0;
@@ -496,6 +497,11 @@ void CCharacterCore::Move()
 		return;
 
 	float RampValue = VelocityRamp(length(m_Vel)*50, m_pWorld->m_Tuning.m_VelrampStart, m_pWorld->m_Tuning.m_VelrampRange, m_pWorld->m_Tuning.m_VelrampCurvature);
+
+	float DragSpeed = m_pWorld->m_Tuning.m_HookDragSpeed;
+	m_Vel.x = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.x, m_InteractVel.x);
+	m_Vel.y = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.y, m_InteractVel.y);
+	m_InteractVel = vec2(0,0);
 
 	m_Vel.x = m_Vel.x*RampValue;
 
