@@ -86,6 +86,7 @@ void CCharacterCore::Reset()
 	m_NewHook = false;
 	m_IgnoreInteractVel = false;
 	m_InteractVel = vec2(0,0);
+	m_HookDragVel = vec2(0,0);
 	m_HookPos = vec2(0,0);
 	m_HookDir = vec2(0,0);
 	m_HookTick = 0;
@@ -492,22 +493,26 @@ void CCharacterCore::Tick(bool UseInput)
 		m_Vel = normalize(m_Vel) * 6000;
 }
 
+void CCharacterCore::AddDragVelocity()
+{
+	// Apply hook interaction velocity
+	float DragSpeed = m_pWorld->m_Tuning.m_HookDragSpeed;
+
+	m_Vel.x = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.x, m_HookDragVel.x);
+	m_Vel.y = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.y, m_HookDragVel.y);
+}
+
+void CCharacterCore::ResetDragVelocity()
+{
+	m_HookDragVel = vec2(0,0);
+}
+
 void CCharacterCore::Move()
 {
 	if(!m_pWorld)
 		return;
 
 	float RampValue = VelocityRamp(length(m_Vel)*50, m_pWorld->m_Tuning.m_VelrampStart, m_pWorld->m_Tuning.m_VelrampRange, m_pWorld->m_Tuning.m_VelrampCurvature);
-
-	// Apply hook interaction velocity
-	float DragSpeed = m_pWorld->m_Tuning.m_HookDragSpeed;
-	if (!m_IgnoreInteractVel)
-	{
-		m_Vel.x = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.x, m_InteractVel.x);
-		m_Vel.y = SaturatedAdd(-DragSpeed, DragSpeed, m_Vel.y, m_InteractVel.y);
-	}
-	m_IgnoreInteractVel = false;
-	m_InteractVel = vec2(0,0);
 
 	m_Vel.x = m_Vel.x*RampValue;
 
