@@ -161,6 +161,7 @@ public:
 	vec2 m_Pos;
 	vec2 m_Vel;
 
+	bool m_IgnoreInteractVel;
 	vec2 m_InteractVel;
 
 	vec2 m_HookPos;
