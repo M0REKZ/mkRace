@@ -554,7 +554,7 @@ public:
 };
 
 
-int CMenus::ThemeScan(const char *pName, int IsDir, int DirType, void *pUser)
+int CMenus::ThemeScan(const char *pName, int IsDir, int DirType, time_t, time_t, void *pUser)
 {
 	CMenus *pSelf = (CMenus *)pUser;
 	const char *pSuffix = str_endswith(pName, ".map");
@@ -605,7 +605,7 @@ int CMenus::ThemeScan(const char *pName, int IsDir, int DirType, void *pUser)
 	return 0;
 }
 
-int CMenus::ThemeIconScan(const char *pName, int IsDir, int DirType, void *pUser)
+int CMenus::ThemeIconScan(const char *pName, int IsDir, int DirType, time_t, time_t, void *pUser)
 {
 	CMenus *pSelf = (CMenus *)pUser;
 	const char *pSuffix = str_endswith(pName, ".png");
