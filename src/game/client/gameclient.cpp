@@ -1614,8 +1614,6 @@ void CGameClient::OnPredict()
 					World.m_apCharacters[m_LocalClientID]->m_TriggeredEvents,
 					World.m_apCharacters[m_LocalClientID]->m_Pos
 				);
-
-			// TODO: `ProcessTriggeredEvents` for other players
 		}
 
 		if (Tick == Client()->PredGameTick()) {
