@@ -1640,7 +1640,8 @@ bool CGameClient::ShouldUsePredicted() {
 				GAMESTATEFLAG_ROUNDOVER |
 				GAMESTATEFLAG_GAMEOVER
 			)
-		);
+		) &&
+		!(m_Snap.m_SpecInfo.m_Active);
 }
 
 bool CGameClient::ShouldUsePredictedLocalChar() {
