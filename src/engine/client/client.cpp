@@ -2604,11 +2604,7 @@ int main(int argc, const char **argv) // ignore_convention
 		}
 	}
 
-	if(secure_random_init() != 0)
-	{
-		dbg_msg("secure", "could not initialize secure RNG");
-		return -1;
-	}
+	bool RandInitFailed = secure_random_init() != 0;
 
 	CClient *pClient = CreateClient();
 	IKernel *pKernel = IKernel::Create();
@@ -2626,6 +2622,12 @@ int main(int argc, const char **argv) // ignore_convention
 	IEngineTextRender *pEngineTextRender = CreateEngineTextRender();
 	IEngineMap *pEngineMap = CreateEngineMap();
 	IEngineMasterServer *pEngineMasterServer = CreateEngineMasterServer();
+
+	if(RandInitFailed)
+	{
+		dbg_msg("secure", "could not initialize secure RNG");
+		return -1;
+	}
 
 	{
 		bool RegisterFail = false;
