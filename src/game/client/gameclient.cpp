@@ -501,7 +501,12 @@ void CGameClient::UpdatePositions()
 	// player (e.g. camera position, mouse input), which is why we set it here.
 	if(ShouldUsePredicted() && ShouldUsePredictedLocalChar())
 	{
-		m_LocalCharacterPos = PredictedCharPos(m_LocalClientID);
+		if(!m_Snap.m_pLocalCharacter || IsWorldPaused())
+		{
+			// don't use predicted
+		}
+		else
+			m_LocalCharacterPos = mix(m_PredictedPrevChar.m_Pos, m_PredictedChar.m_Pos, Client()->PredIntraGameTick());
 	}
 	else if(m_Snap.m_pLocalCharacter && m_Snap.m_pLocalPrevCharacter)
 	{
@@ -1527,12 +1532,7 @@ void CGameClient::OnPredict()
 	// (predicting) what will happen between `GameTick` and `PredGameTick`.
 
 	// don't predict anything if we are paused or round/game is over
-	if(m_Snap.m_pGameData &&
-		m_Snap.m_pGameData->m_GameStateFlags & (
-			GAMESTATEFLAG_PAUSED |
-			GAMESTATEFLAG_ROUNDOVER |
-			GAMESTATEFLAG_GAMEOVER
-		))
+	if(IsWorldPaused())
 	{
 		for(int i = 0; i < MAX_CLIENTS; i++)
 		{
