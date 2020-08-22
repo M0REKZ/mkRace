@@ -40,6 +40,8 @@ class CMapLayers : public CComponent
 	void LoadPainters(CLayers *pLayers);
 	void LoadAutomapperRules(CLayers *pLayers, const char* pName);
 
+	void PlaceEasterEggs(const CLayers *pLayers);
+
 public:
 	enum
 	{
