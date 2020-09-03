@@ -2109,6 +2109,8 @@ void CClient::Run()
 			}
 			else if(m_EditorActive)
 				m_EditorActive = false;
+			
+			m_pTextRender->Update();
 
 			Update();
 
