@@ -501,12 +501,7 @@ void CGameClient::UpdatePositions()
 	// player (e.g. camera position, mouse input), which is why we set it here.
 	if(ShouldUsePredicted() && ShouldUsePredictedLocalChar())
 	{
-		if(!m_Snap.m_pLocalCharacter || IsWorldPaused())
-		{
-			// don't use predicted
-		}
-		else
-			m_LocalCharacterPos = mix(m_PredictedPrevChar.m_Pos, m_PredictedChar.m_Pos, Client()->PredIntraGameTick());
+		m_LocalCharacterPos = PredictedCharPos(m_LocalClientID);
 	}
 	else if(m_Snap.m_pLocalCharacter && m_Snap.m_pLocalPrevCharacter)
 	{
@@ -1563,19 +1558,8 @@ void CGameClient::OnPredict()
 		return;
 	}
 
-	int PhysicsFlags = 0;
-	if(Config()->m_ClPredictRace) // TODO: only on race servers
-	{
-		if(Config()->m_ClPredictTeleport)
-			PhysicsFlags |= PHYSICSFLAG_TELEPORT;
-		if(Config()->m_ClPredictSpeedup)
-			PhysicsFlags |= PHYSICSFLAG_SPEEDUP;
-		if(Config()->m_ClPredictStopTiles)
-			PhysicsFlags |= PHYSICSFLAG_STOPPER;
-	}
-
 	// repredict character
-	CWorldCore World(PhysicsFlags);
+	CWorldCore World;
 	World.m_Tuning = m_Tuning;
 
 	// search for players

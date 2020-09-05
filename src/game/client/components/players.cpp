@@ -211,6 +211,7 @@ void CPlayers::RenderPlayer(
 			IntraTick = Client()->PredIntraGameTick();
 		}
 	}
+	const bool WorldPaused = m_pClient->IsWorldPaused();
 
 	vec2 Direction = direction(Angle);
 	vec2 Position = mix(vec2(Prev.m_X, Prev.m_Y), vec2(Player.m_X, Player.m_Y), IntraTick);
