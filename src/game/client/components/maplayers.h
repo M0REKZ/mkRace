@@ -21,9 +21,6 @@ class CMapLayers : public CComponent
 	int m_CurrentLocalTick;
 	int m_LastLocalTick;
 	float m_OnlineStartTime;
-	bool m_EnvelopeUpdate;
-	bool m_AutolayerUpdate;
-	bool m_TeleUpdate;
 
 	array<CEnvPoint> m_lEnvPoints;
 	array<CEnvPoint> m_lEnvPointsMenu;
