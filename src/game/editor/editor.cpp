@@ -4443,6 +4443,8 @@ void CEditor::UpdateAndRender()
 	UI()->FinishCheck();
 	UI()->ClearHotkeys();
 	Input()->Clear();
+
+	CLineInput::RenderCandidates();
 }
 
 IEditor *CreateEditor() { return new CEditor; }
