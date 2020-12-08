@@ -263,7 +263,7 @@ struct CMapItemImage_v1
 struct CMapItemImage : public CMapItemImage_v1
 {
 	enum { CURRENT_VERSION=2 };
-	int m_Format;
+	int m_MustBe1;
 };
 
 struct CMapItemGroup_v1
