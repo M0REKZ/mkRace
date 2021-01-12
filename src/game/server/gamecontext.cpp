@@ -650,7 +650,7 @@ void CGameContext::OnTick()
 				Console()->ExecuteLine(m_aVoteCommand);
 				Server()->SetRconCID(IServer::RCON_CID_SERV);
 				if(m_VoteCreator != -1 && m_apPlayers[m_VoteCreator])
-					m_apPlayers[m_VoteCreator]->m_LastVoteCall = 0;
+					m_apPlayers[m_VoteCreator]->m_LastVoteCallTick = 0;
 
 				EndVote(VOTE_END_PASS, m_VoteEnforce == VOTE_CHOICE_YES);
 			}
@@ -900,7 +900,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 	{
 		if(MsgID == NETMSGTYPE_CL_SAY)
 		{
-			if(Config()->m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat+Server()->TickSpeed() > Server()->Tick())
+			if(Config()->m_SvSpamprotection && pPlayer->m_LastChatTeamTick && pPlayer->m_LastChatTeamTick+Server()->TickSpeed() > Server()->Tick())
 				return;
 
 			CNetMsg_Cl_Say *pMsg = (CNetMsg_Cl_Say *)pRawMsg;
@@ -932,10 +932,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				*(const_cast<char *>(pEnd)) = 0;
 
 			// drop empty and autocreated spam messages (more than 20 characters per second)
-			if(Length == 0 || (Config()->m_SvSpamprotection && pPlayer->m_LastChat && pPlayer->m_LastChat + Server()->TickSpeed()*(Length/20) > Server()->Tick()))
+			if(Length == 0 || (Config()->m_SvSpamprotection && pPlayer->m_LastChatTeamTick && pPlayer->m_LastChatTeamTick + Server()->TickSpeed()*(Length/20) > Server()->Tick()))
 				return;
 
-			pPlayer->m_LastChat = Server()->Tick();
+			pPlayer->m_LastChatTeamTick = Server()->Tick();
 
 			if(pMsg->m_pMessage[0] == '/')
 			{
@@ -986,12 +986,12 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			}
 			else
 			{
-				if((Config()->m_SvSpamprotection && ((pPlayer->m_LastVoteTry && pPlayer->m_LastVoteTry+Server()->TickSpeed()*3 > Now) ||
-					(pPlayer->m_LastVoteCall && pPlayer->m_LastVoteCall+Server()->TickSpeed()*VOTE_COOLDOWN > Now))) ||
+				if((Config()->m_SvSpamprotection && ((pPlayer->m_LastVoteTryTick && pPlayer->m_LastVoteTryTick+Server()->TickSpeed()*3 > Now) ||
+					(pPlayer->m_LastVoteCallTick && pPlayer->m_LastVoteCallTick+Server()->TickSpeed()*VOTE_COOLDOWN > Now))) ||
 					pPlayer->GetTeam() == TEAM_SPECTATORS || m_VoteCloseTime)
 					return;
 
-				pPlayer->m_LastVoteTry = Now;
+				pPlayer->m_LastVoteTryTick = Now;
 			}
 
 			m_VoteType = VOTE_UNKNOWN;
@@ -1105,17 +1105,17 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				StartVote(aDesc, aCmd, pReason);
 				pPlayer->m_Vote = VOTE_CHOICE_YES;
 				pPlayer->m_VotePos = m_VotePos = 1;
-				pPlayer->m_LastVoteCall = Now;
+				pPlayer->m_LastVoteCallTick = Now;
 
 				{
-                                        char aBuf[256];
-                                        str_format(aBuf, sizeof(aBuf), "start %d %d %d %s::%s::%s", ClientID, m_VoteType, m_VoteClientID, aDesc, aCmd, pReason);
-                                        Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "vote", aBuf);
-                                }
-                        }
-			dumpjson("event", "votecall", "player", json_plr(Server(), ClientID), "cmd", aCmd, "reason", pReason, "label", aDesc);
+                    char aBuf[256];
+                    str_format(aBuf, sizeof(aBuf), "start %d %d %d %s::%s::%s", ClientID, m_VoteType, m_VoteClientID, aDesc, aCmd, pReason);
+                    Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "vote", aBuf);
                 }
-                else if(MsgID == NETMSGTYPE_CL_VOTE)
+            }
+			dumpjson("event", "votecall", "player", json_plr(Server(), ClientID), "cmd", aCmd, "reason", pReason, "label", aDesc);
+        }
+        else if(MsgID == NETMSGTYPE_CL_VOTE)
 		{
 			{
                                 char aBuf[64];
@@ -1156,11 +1156,11 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			CNetMsg_Cl_SetTeam *pMsg = (CNetMsg_Cl_SetTeam *)pRawMsg;
 
 			if(pPlayer->GetTeam() == pMsg->m_Team ||
-				(Config()->m_SvSpamprotection && pPlayer->m_LastSetTeam && pPlayer->m_LastSetTeam+Server()->TickSpeed()*3 > Server()->Tick()) ||
+				(Config()->m_SvSpamprotection && pPlayer->m_LastSetTeamTick && pPlayer->m_LastSetTeamTick+Server()->TickSpeed()*3 > Server()->Tick()) ||
 				(pMsg->m_Team != TEAM_SPECTATORS && m_LockTeams) || pPlayer->m_TeamChangeTick > Server()->Tick())
 				return;
 
-			pPlayer->m_LastSetTeam = Server()->Tick();
+			pPlayer->m_LastSetTeamTick = Server()->Tick();
 
 			// Switch team on given client and kill/respawn him
 			if(m_pController->CanJoinTeam(pMsg->m_Team, ClientID) && m_pController->CanChangeTeam(pPlayer, pMsg->m_Team))
@@ -1175,10 +1175,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		{
 			CNetMsg_Cl_SetSpectatorMode *pMsg = (CNetMsg_Cl_SetSpectatorMode *)pRawMsg;
 
-			if(Config()->m_SvSpamprotection && pPlayer->m_LastSetSpectatorMode && pPlayer->m_LastSetSpectatorMode+Server()->TickSpeed() > Server()->Tick())
+			if(Config()->m_SvSpamprotection && pPlayer->m_LastSetSpectatorModeTick && pPlayer->m_LastSetSpectatorModeTick+Server()->TickSpeed() > Server()->Tick())
 				return;
 
-			pPlayer->m_LastSetSpectatorMode = Server()->Tick();
+			pPlayer->m_LastSetSpectatorModeTick = Server()->Tick();
 			if(!pPlayer->SetSpectatorID(pMsg->m_SpecMode, pMsg->m_SpectatorID))
 				SendGameMsg(GAMEMSG_SPEC_INVALIDID, ClientID);
 		}
@@ -1186,10 +1186,10 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		{
 			CNetMsg_Cl_Emoticon *pMsg = (CNetMsg_Cl_Emoticon *)pRawMsg;
 
-			if(Config()->m_SvSpamprotection && pPlayer->m_LastEmote && pPlayer->m_LastEmote+Server()->TickSpeed()*3 > Server()->Tick())
+			if(Config()->m_SvSpamprotection && pPlayer->m_LastEmoteTick && pPlayer->m_LastEmoteTick+Server()->TickSpeed()*3 > Server()->Tick())
 				return;
 
-			pPlayer->m_LastEmote = Server()->Tick();
+			pPlayer->m_LastEmoteTick = Server()->Tick();
 
 			SendEmoticon(ClientID, pMsg->m_Emoticon);
 			CCharacter *pChr = pPlayer->GetCharacter();
@@ -1233,7 +1233,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		}
 		else if (MsgID == NETMSGTYPE_CL_KILL && !m_World.m_Paused)
 		{
-			if(pPlayer->m_LastKill && pPlayer->m_LastKill + Server()->TickSpeed() / 5 > Server()->Tick())
+			if(pPlayer->m_LastKillTick && pPlayer->m_LastKillTick + Server()->TickSpeed() / 5 > Server()->Tick())
 				return;
 
 			pPlayer->m_LastKill = Server()->Tick();
@@ -1312,18 +1312,18 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 		}
 		else if (MsgID == NETMSGTYPE_CL_READYCHANGE)
 		{
-			if(pPlayer->m_LastReadyChange && pPlayer->m_LastReadyChange+Server()->TickSpeed()*1 > Server()->Tick())
+			if(pPlayer->m_LastReadyChangeTick && pPlayer->m_LastReadyChangeTick+Server()->TickSpeed()*1 > Server()->Tick())
 				return;
 
-			pPlayer->m_LastReadyChange = Server()->Tick();
+			pPlayer->m_LastReadyChangeTick = Server()->Tick();
 			m_pController->OnPlayerReadyChange(pPlayer);
 		}
 		else if (MsgID == NETMSGTYPE_CL_SKINCHANGE)
 		{
-			if(pPlayer->m_LastChangeInfo && pPlayer->m_LastChangeInfo+Server()->TickSpeed()*5 > Server()->Tick())
+			if(pPlayer->m_LastChangeInfoTick && pPlayer->m_LastChangeInfoTick+Server()->TickSpeed()*5 > Server()->Tick())
 				return;
 
-			pPlayer->m_LastChangeInfo = Server()->Tick();
+			pPlayer->m_LastChangeInfoTick = Server()->Tick();
 			CNetMsg_Cl_SkinChange *pMsg = (CNetMsg_Cl_SkinChange *)pRawMsg;
 
 			for(int p = 0; p < NUM_SKINPARTS; p++)
@@ -1358,7 +1358,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 				return;
 
 			CNetMsg_Cl_StartInfo *pMsg = (CNetMsg_Cl_StartInfo *)pRawMsg;
-			pPlayer->m_LastChangeInfo = Server()->Tick();
+			pPlayer->m_LastChangeInfoTick = Server()->Tick();
 
 			// set start infos
 			Server()->SetClientName(ClientID, pMsg->m_pName);
