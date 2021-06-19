@@ -235,6 +235,7 @@ void CCharacter::HandleNinja()
 		// reset velocity
 		if(m_Ninja.m_CurrentMoveTime > 0)
 			m_Core.m_Vel = m_Ninja.m_ActivationDir*m_Ninja.m_OldVelAmount;
+		m_Ninja.m_CurrentMoveTime = -1;
 
 		SetWeapon(m_ActiveWeapon);
 		return;
