@@ -157,7 +157,7 @@ private:
 	bool m_Frozen; // not sure if we should use this
 
 	// weapon info
-	CEntity *m_apHitObjects[10];
+	CEntity *m_apHitObjects[MAX_PLAYERS];
 	int m_NumObjectsHit;
 
 	struct WeaponStat
