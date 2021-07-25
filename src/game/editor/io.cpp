@@ -231,7 +231,7 @@ int CEditorMap::Save(class IStorage *pStorage, const char *pFileName)
 
 	// save points
 	int TotalSize = Size * PointCount;
-	unsigned char *pPoints = (unsigned char *)mem_alloc(TotalSize, 1);
+	unsigned char *pPoints = (unsigned char *)mem_alloc(TotalSize);
 	int Offset = 0;
 	for(int e = 0; e < m_lEnvelopes.size(); e++)
 	{
@@ -341,9 +341,10 @@ int CEditorMap::Load(class IStorage *pStorage, const char *pFileName, int Storag
 					pImg->m_Format = CImageInfo::FORMAT_RGBA;
 
 					// copy image data
+					int DataSize = pImg->m_Width * pImg->m_Height * PixelSize;
 					void *pData = DataFile.GetData(pItem->m_ImageData);
-					pImg->m_pData = mem_alloc(pImg->m_Width*pImg->m_Height*4, 1);
-					mem_copy(pImg->m_pData, pData, pImg->m_Width*pImg->m_Height*4);
+					pImg->m_pData = mem_alloc(DataSize);
+					mem_copy(pImg->m_pData, pData, DataSize);
 					pImg->m_Texture = m_pEditor->Graphics()->LoadTextureRaw(pImg->m_Width, pImg->m_Height, pImg->m_Format, pImg->m_pData, CImageInfo::FORMAT_AUTO, IGraphics::TEXLOAD_MULTI_DIMENSION);
 				}
 
