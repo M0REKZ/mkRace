@@ -406,7 +406,7 @@ function BuildContent(settings, arch, conf)
 end
 
 -- create all targets for specified configuration & architecture
-function GenerateSettings(conf, arch, builddir, compiler)
+function GenerateSettings(conf, arch, builddir, compiler, headless)
 	local settings = NewSettings()
 
 	-- Set compiler if explicitly requested
@@ -422,7 +422,7 @@ function GenerateSettings(conf, arch, builddir, compiler)
 		compiler = config.compiler.driver
 	end
 	
-	if conf ==  "debug" then
+	if conf == "debug" then
 		settings.debug = 1
 		settings.optimize = 0
 		settings.cc.defines:Add("CONF_DEBUG")
@@ -435,6 +435,10 @@ function GenerateSettings(conf, arch, builddir, compiler)
 		settings.cc.defines:Add("CONF_RELEASE")
                 settings.cc.flags:Add("-O3", "-s", "-fvisibility=hidden", "-flto", "-fno-rtti")
 		settings.link.flags:Add("-O3", "-s", "-fvisibility=hidden", "-flto", "-fno-rtti")
+	end
+
+	if headless == "on" then
+		settings.cc.defines:Add("CONF_HEADLESS_CLIENT")
 	end
 	
 	-- Generate object files in {builddir}/objs/
@@ -521,6 +525,12 @@ if ScriptArgs['builddir'] then
 	builddir = ScriptArgs['builddir']
 end
 
+if ScriptArgs['headless'] then
+	headless = ScriptArgs['headless']
+else
+	headless = nil
+end
+
 targets = {client="teeworlds", server="teeworlds_srv",
            versionserver="versionsrv", masterserver="mastersrv",
            tools="pseudo_tools", content="content"}
@@ -532,7 +542,7 @@ end
 for a, cur_arch in ipairs(archs) do
 	for c, cur_conf in ipairs(confs) do
 		cur_builddir = interp(builddir, {platform=family, arch=cur_arch, target=cur_target, conf=cur_conf, compiler=compiler})
-		local settings = GenerateSettings(cur_conf, cur_arch, cur_builddir, compiler)
+		local settings = GenerateSettings(cur_conf, cur_arch, cur_builddir, compiler, headless)
 		for t, cur_target in pairs(targets) do
 			table.insert(subtargets[cur_target], PathJoin(cur_builddir, cur_target .. settings.link.extension))
 		end
