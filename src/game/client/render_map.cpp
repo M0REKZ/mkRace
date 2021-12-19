@@ -126,7 +126,7 @@ float SolveBezier(float x, float p0, float p1, float p2, float p3)
 	}
 }
 
-void CRenderTools::RenderEvalEnvelope(CEnvPoint *pPoints, int NumPoints, int Channels, float Time, float *pResult)
+void CRenderTools::RenderEvalEnvelope(const CEnvPoint *pPoints, int NumPoints, int Channels, float Time, float *pResult)
 {
 	if(NumPoints == 0)
 	{
@@ -217,7 +217,7 @@ void CRenderTools::RenderEvalEnvelope(CEnvPoint *pPoints, int NumPoints, int Cha
 	return;
 }
 
-static void Rotate(CPoint *pCenter, CPoint *pPoint, float Rotation)
+static void Rotate(const CPoint *pCenter, CPoint *pPoint, float Rotation)
 {
 	int x = pPoint->x - pCenter->x;
 	int y = pPoint->y - pCenter->y;
@@ -225,13 +225,13 @@ static void Rotate(CPoint *pCenter, CPoint *pPoint, float Rotation)
 	pPoint->y = (int)(x * sinf(Rotation) + y * cosf(Rotation) + pCenter->y);
 }
 
-void CRenderTools::RenderQuads(CQuad *pQuads, int NumQuads, int RenderFlags, ENVELOPE_EVAL pfnEval, void *pUser)
+void CRenderTools::RenderQuads(const CQuad *pQuads, int NumQuads, int RenderFlags, ENVELOPE_EVAL pfnEval, void *pUser)
 {
 	Graphics()->QuadsBegin();
 	float Conv = 1/255.0f;
 	for(int i = 0; i < NumQuads; i++)
 	{
-		CQuad *q = &pQuads[i];
+		const CQuad *q = &pQuads[i];
 
 		float r=1, g=1, b=1, a=1;
 
@@ -303,7 +303,7 @@ void CRenderTools::RenderQuads(CQuad *pQuads, int NumQuads, int RenderFlags, ENV
 			IGraphics::CColorVertex(3, q->m_aColors[3].r*Conv*r*q->m_aColors[3].a*Conv*a, q->m_aColors[3].g*Conv*g*q->m_aColors[3].a*Conv*a, q->m_aColors[3].b*Conv*b*q->m_aColors[3].a*Conv*a, q->m_aColors[3].a*Conv*a)};
 		Graphics()->SetColorVertex(Array, 4);
 
-		CPoint *pPoints = q->m_aPoints;
+		const CPoint *pPoints = q->m_aPoints;
 
 		if(Rot != 0)
 		{
@@ -331,139 +331,7 @@ void CRenderTools::RenderQuads(CQuad *pQuads, int NumQuads, int RenderFlags, ENV
 	Graphics()->WrapNormal();
 }
 
-void CRenderTools::RenderTeleOverlay(CTeleTile *pTele, int w, int h, float Scale)
-{
-	float ScreenX0, ScreenY0, ScreenX1, ScreenY1;
-	Graphics()->GetScreen(&ScreenX0, &ScreenY0, &ScreenX1, &ScreenY1);
-
-	int StartY = (int)(ScreenY0 / Scale) - 1;
-	int StartX = (int)(ScreenX0 / Scale) - 1;
-	int EndY = (int)(ScreenY1 / Scale) + 1;
-	int EndX = (int)(ScreenX1 / Scale) + 1;
-
-	for (int y = StartY; y < EndY; y++)
-		for (int x = StartX; x < EndX; x++)
-		{
-			int mx = x;
-			int my = y;
-
-
-			if (mx < 0)
-				continue; // mx = 0;
-			if (mx >= w)
-				continue; // mx = w-1;
-			if (my < 0)
-				continue; // my = 0;
-			if (my >= h)
-				continue; // my = h-1;
-
-			int c = mx + my * w;
-
-			unsigned char Index = pTele[c].m_Number;
-			if (Index)
-			{
-				char aBuf[16];
-				str_format(aBuf, sizeof(aBuf), "%d", Index);
-				UI()->TextRender()->Text(0, mx*Scale - 2, my*Scale - 4, Scale - 5, aBuf, -1);
-				//Graphics()->SetColor(0, 0, 1, 1);
-			}
-		}
-
-	Graphics()->MapScreen(ScreenX0, ScreenY0, ScreenX1, ScreenY1);
-}
-
-void CRenderTools::RenderTelemap(CTeleTile *pTele, int w, int h, float Scale, vec4 Color, int RenderFlags)
-{
-	float ScreenX0, ScreenY0, ScreenX1, ScreenY1;
-	Graphics()->GetScreen(&ScreenX0, &ScreenY0, &ScreenX1, &ScreenY1);
-
-	// calculate the final pixelsize for the tiles
-	float TilePixelSize = 1024 / 32.0f;
-	float FinalTileSize = Scale / (ScreenX1 - ScreenX0) * Graphics()->ScreenWidth();
-	float FinalTilesetScale = FinalTileSize / TilePixelSize;
-
-	Graphics()->QuadsBegin();
-	Graphics()->SetColor(Color.r, Color.g, Color.b, Color.a);
-
-	int StartY = (int)(ScreenY0 / Scale) - 1;
-	int StartX = (int)(ScreenX0 / Scale) - 1;
-	int EndY = (int)(ScreenY1 / Scale) + 1;
-	int EndX = (int)(ScreenX1 / Scale) + 1;
-
-	// adjust the texture shift according to mipmap level
-	float TexSize = 1024.0f;
-	float Frac = (1.25f / TexSize) * (1 / FinalTilesetScale);
-	float Nudge = (0.5f / TexSize) * (1 / FinalTilesetScale);
-
-	for (int y = StartY; y < EndY; y++)
-		for (int x = StartX; x < EndX; x++)
-		{
-			int mx = x;
-			int my = y;
-
-			if (RenderFlags&TILERENDERFLAG_EXTEND)
-			{
-				if (mx < 0)
-					mx = 0;
-				if (mx >= w)
-					mx = w - 1;
-				if (my < 0)
-					my = 0;
-				if (my >= h)
-					my = h - 1;
-			}
-			else
-			{
-				if (mx < 0)
-					continue; // mx = 0;
-				if (mx >= w)
-					continue; // mx = w-1;
-				if (my < 0)
-					continue; // my = 0;
-				if (my >= h)
-					continue; // my = h-1;
-			}
-
-			int c = mx + my * w;
-
-			unsigned char Index = pTele[c].m_Type;
-			if (Index)
-			{
-				bool Render = false;
-				if (RenderFlags&LAYERRENDERFLAG_TRANSPARENT)
-					Render = true;
-
-				if (Render)
-				{
-
-					int tx = Index % 16;
-					int ty = Index / 16;
-					int Px0 = tx * (1024 / 16);
-					int Py0 = ty * (1024 / 16);
-					int Px1 = Px0 + (1024 / 16) - 1;
-					int Py1 = Py0 + (1024 / 16) - 1;
-
-					float x0 = Nudge + Px0 / TexSize + Frac;
-					float y0 = Nudge + Py0 / TexSize + Frac;
-					float x1 = Nudge + Px1 / TexSize - Frac;
-					float y1 = Nudge + Py0 / TexSize + Frac;
-					float x2 = Nudge + Px1 / TexSize - Frac;
-					float y2 = Nudge + Py1 / TexSize - Frac;
-					float x3 = Nudge + Px0 / TexSize + Frac;
-					float y3 = Nudge + Py1 / TexSize - Frac;
-
-					Graphics()->QuadsSetSubsetFree(x0, y0, x1, y1, x2, y2, x3, y3);
-					IGraphics::CQuadItem QuadItem(x*Scale, y*Scale, Scale, Scale);
-					Graphics()->QuadsDrawTL(&QuadItem, 1);
-				}
-			}
-		}
-
-	Graphics()->QuadsEnd();
-	Graphics()->MapScreen(ScreenX0, ScreenY0, ScreenX1, ScreenY1);
-}
-
-void CRenderTools::RenderTilemap(CTile *pTiles, int w, int h, float Scale, vec4 Color, int RenderFlags,
+void CRenderTools::RenderTilemap(const CTile *pTiles, int w, int h, float Scale, vec4 Color, int RenderFlags,
 									ENVELOPE_EVAL pfnEval, void *pUser, int ColorEnv, int ColorEnvOffset)
 {
 	float ScreenX0, ScreenY0, ScreenX1, ScreenY1;
