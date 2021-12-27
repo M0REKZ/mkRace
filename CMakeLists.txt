@@ -1740,6 +1740,7 @@ add_custom_target(everything DEPENDS ${TARGETS_OWN})
 if(GTEST_FOUND OR DOWNLOAD_GTEST)
   set_src(TESTS GLOB src/test
     bytes_be.cpp
+    compression.cpp
     datafile.cpp
     fs.cpp
     git_revision.cpp
