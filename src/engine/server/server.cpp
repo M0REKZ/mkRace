@@ -1315,6 +1315,7 @@ int CServer::Run()
 	if(!LoadMap(Config()->m_SvMap))
 	{
 		dbg_msg("server", "failed to load map. mapname='%s'", Config()->m_SvMap);
+		Free();
 		return -1;
 	}
 	m_MapChunksPerRequest = Config()->m_SvMapDownloadSpeed;
@@ -1338,6 +1339,7 @@ int CServer::Run()
 		Config()->m_SvMaxClients, Config()->m_SvMaxClientsPerIP, NewClientCallback, DelClientCallback, this))
 	{
 		dbg_msg("server", "couldn't open socket. port %d might already be in use", Config()->m_SvPort);
+		Free();
 		return -1;
 	}
 
@@ -1470,19 +1472,29 @@ int CServer::Run()
 	m_Econ.Shutdown();
 
 	GameServer()->OnShutdown();
-	m_pMap->Unload();
+	Free();
+
+	return 0;
+}
+
+void CServer::Free()
+{
+	if(m_pMap)
+	{
+		m_pMap->Unload();
+	}
 
 	if(m_pCurrentMapData)
 	{
 		mem_free(m_pCurrentMapData);
 		m_pCurrentMapData = 0;
 	}
+
 	if(m_pMapListHeap)
 	{
 		delete m_pMapListHeap;
 		m_pMapListHeap = 0;
 	}
-	return 0;
 }
 
 int CServer::MapListEntryCallback(const char *pFilename, int IsDir, int DirType, void *pUser)

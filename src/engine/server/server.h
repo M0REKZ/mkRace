@@ -260,6 +260,7 @@ public:
 	void InitRegister(CNetServer *pNetServer, IEngineMasterServer *pMasterServer, CConfig *pConfig, IConsole *pConsole);
 	void InitInterfaces(CConfig *pConfig, IConsole *pConsole, IGameServer *pGameServer, IEngineMap *pMap, IStorage *pStorage);
 	int Run();
+	void Free();
 
 	static int MapListEntryCallback(const char *pFilename, int IsDir, int DirType, void *pUser);
 
