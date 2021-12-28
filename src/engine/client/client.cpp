@@ -2717,6 +2717,7 @@ int main(int argc, const char **argv) // ignore_convention
 		dbg_console_cleanup();
 #endif
 	// free components
+	pClient->~CClient();
 	mem_free(pClient);
 	delete pKernel;
 	delete pEngine;
