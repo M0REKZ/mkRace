@@ -2709,6 +2709,9 @@ int main(int argc, const char **argv) // ignore_convention
 	dbg_msg("client", "starting...");
 	pClient->Run();
 
+	// wait for background jobs to finish
+	pEngine->ShutdownJobs();
+
 	// write down the config and quit
 	pConfigManager->Save();
 
