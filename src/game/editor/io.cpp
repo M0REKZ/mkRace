@@ -338,10 +338,10 @@ int CEditorMap::Load(class IStorage *pStorage, const char *pFileName, int Storag
 				{
 					pImg->m_Width = pItem->m_Width;
 					pImg->m_Height = pItem->m_Height;
-					pImg->m_Format = CImageInfo::FORMAT_RGBA;
+					pImg->m_Format = pItem->m_Version == 1 ? CImageInfo::FORMAT_RGBA : pItem->m_Format;
 
 					// copy image data
-					int DataSize = pImg->m_Width * pImg->m_Height * PixelSize;
+					const int DataSize = pImg->m_Width * pImg->m_Height * pImg->GetPixelSize();
 					void *pData = DataFile.GetData(pItem->m_ImageData);
 					pImg->m_pData = mem_alloc(DataSize);
 					mem_copy(pImg->m_pData, pData, DataSize);
