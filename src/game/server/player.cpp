@@ -45,6 +45,7 @@ CPlayer::CPlayer(CGameContext *pGameServer, int ClientID, bool Dummy, bool AsSpe
 	m_EyeEmote = true;
 	m_DefEmote = EMOTE_NORMAL;
 	m_DefEmoteReset = -1;
+	mem_zero(&m_Latency, sizeof(m_Latency));
 }
 
 CPlayer::~CPlayer()
