@@ -595,7 +595,7 @@ void CServer::DoSnapshot()
 			// create delta
 			DeltaSize = m_SnapshotDelta.CreateDelta(pDeltashot, pData, aDeltaData);
 
-			if(DeltaSize)
+			if(DeltaSize > 0)
 			{
 				// compress it
 				int SnapshotSize;
@@ -640,6 +640,13 @@ void CServer::DoSnapshot()
 				Msg.AddInt(m_CurrentGameTick);
 				Msg.AddInt(m_CurrentGameTick-DeltaTick);
 				SendMsg(&Msg, MSGFLAG_FLUSH, i);
+
+				if(DeltaSize < 0)
+				{
+					char aBuf[64];
+					str_format(aBuf, sizeof(aBuf), "delta pack failed! (%d)", DeltaSize);
+					m_pConsole->Print(IConsole::OUTPUT_LEVEL_DEBUG, "server", aBuf);
+				}
 			}
 		}
 	}
