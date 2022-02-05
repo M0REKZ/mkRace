@@ -51,7 +51,7 @@ bool CSpectator::SpecModePossible(int SpecMode, int SpectatorID)
 	case SPEC_FLAGBLUE:
 		return m_pClient->m_GameInfo.m_GameFlags&GAMEFLAG_FLAGS;
 	case SPEC_FREEVIEW:
-		return m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team == TEAM_SPECTATORS;
+		return m_pClient->m_LocalClientID == -1 || m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team == TEAM_SPECTATORS;
 	default:
 		dbg_assert(false, "invalid spec mode");
 		return false;
@@ -170,9 +170,13 @@ void CSpectator::OnRender()
 	int TotalCount = 0;
 	for(int i = 0; i < MAX_CLIENTS; ++i)
 	{
-		if(!m_pClient->m_Snap.m_paPlayerInfos[i] || m_pClient->m_aClients[i].m_Team == TEAM_SPECTATORS ||
-			(m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != TEAM_SPECTATORS && (m_pClient->m_Snap.m_paPlayerInfos[i]->m_PlayerFlags&PLAYERFLAG_DEAD ||
-			m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != m_pClient->m_aClients[i].m_Team || i == m_pClient->m_LocalClientID)))
+		if(!m_pClient->m_Snap.m_paPlayerInfos[i]
+			|| m_pClient->m_aClients[i].m_Team == TEAM_SPECTATORS
+			|| (m_pClient->m_LocalClientID != -1
+				&& m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != TEAM_SPECTATORS
+				&& (m_pClient->m_Snap.m_paPlayerInfos[i]->m_PlayerFlags&PLAYERFLAG_DEAD
+					|| m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != m_pClient->m_aClients[i].m_Team
+					|| i == m_pClient->m_LocalClientID)))
 			continue;
 		TotalCount++;
 	}
@@ -280,10 +284,12 @@ void CSpectator::OnRender()
 
 	for(int i = 0, Count = 0; i < MAX_CLIENTS; ++i)
 	{
-		if(!m_pClient->m_Snap.m_paPlayerInfos[i] || m_pClient->m_aClients[i].m_Team == TEAM_SPECTATORS ||
-			m_pClient->m_Snap.m_paPlayerInfos[i]->m_PlayerFlags&PLAYERFLAG_DEAD ||
-			(m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != TEAM_SPECTATORS &&
-			(m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != m_pClient->m_aClients[i].m_Team || i == m_pClient->m_LocalClientID)))
+		if(!m_pClient->m_Snap.m_paPlayerInfos[i]
+			|| m_pClient->m_aClients[i].m_Team == TEAM_SPECTATORS
+			|| m_pClient->m_Snap.m_paPlayerInfos[i]->m_PlayerFlags&PLAYERFLAG_DEAD
+			|| (m_pClient->m_LocalClientID != -1
+				&& m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != TEAM_SPECTATORS
+				&& (m_pClient->m_aClients[m_pClient->m_LocalClientID].m_Team != m_pClient->m_aClients[i].m_Team || i == m_pClient->m_LocalClientID)))
 			continue;
 
 		if(Count != 0 && Count%ColumnSize == 0)
