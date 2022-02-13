@@ -1961,6 +1961,7 @@ int main(int argc, const char **argv) // ignore_convention
 	delete pStorage;
 	delete pConfigManager;
 
+	secure_random_uninit();
 	cmdline_free(argc, argv);
 	return Ret;
 }
