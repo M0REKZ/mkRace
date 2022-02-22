@@ -59,6 +59,9 @@ void CMapLayers::LoadBackgroundMap()
 			case SEASON_WINTER:
 				pMenuMap = "winter";
 				break;
+			case SEASON_NEWYEAR:
+				pMenuMap = "newyear";
+				break;
 		}
 	}
 
