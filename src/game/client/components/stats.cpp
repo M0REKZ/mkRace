@@ -402,7 +402,7 @@ void CStats::OnRender()
 		if(Config()->m_ClStatboardInfos & TC_STATS_RATIO)
 		{
 			if(pStats->m_Deaths == 0)
-				str_format(aBuf, sizeof(aBuf), "--");
+				str_format(aBuf, sizeof(aBuf), "—");
 			else
 				str_format(aBuf, sizeof(aBuf), "%.2f", (float)(pStats->m_Frags)/pStats->m_Deaths);
 			s_Cursor.Reset();
@@ -502,7 +502,7 @@ void CStats::OnRender()
 				s_Cursor.Reset();
 				s_Cursor.MoveTo(x+px, y);
 				s_Cursor.m_Align = TEXTALIGN_CENTER;
-				TextRender()->TextOutlined(&s_Cursor, "--", -1);
+				TextRender()->TextOutlined(&s_Cursor, "—", -1);
 			}
 			else
 			{
