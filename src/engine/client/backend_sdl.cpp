@@ -210,7 +210,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::CState &St
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		break;
 	default:
-		dbg_msg("render", "unknown wrapmode %d", State.m_WrapModeU);
+		dbg_msg("render", "unknown wrapmode u %d", State.m_WrapModeU);
 	};
 
 	switch(State.m_WrapModeV)
@@ -222,7 +222,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::CState &St
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		break;
 	default:
-		dbg_msg("render", "unknown wrapmode %d", State.m_WrapModeV);
+		dbg_msg("render", "unknown wrapmode v %d", State.m_WrapModeV);
 	};
 
 	if(State.m_Texture >= 0 && State.m_Texture < CCommandBuffer::MAX_TEXTURES && State.m_Dimension == 3)
@@ -470,7 +470,7 @@ void CCommandProcessorFragment_OpenGL::Cmd_Render(const CCommandBuffer::CRenderC
 		glDrawArrays(GL_LINES, 0, pCommand->m_PrimCount*2);
 		break;
 	default:
-		dbg_msg("render", "unknown primtype %d", pCommand->m_Cmd);
+		dbg_msg("render", "unknown primtype %d", pCommand->m_PrimType);
 	};
 }
 
