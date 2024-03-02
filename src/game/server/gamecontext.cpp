@@ -210,6 +210,7 @@ void CGameContext::CreateSound(vec2 Pos, int Sound, int64 Mask)
 	}
 }
 
+// ----- send functions -----
 void CGameContext::SendChat(int ChatterClientID, int Mode, int To, const char *pText)
 {
 	char aBuf[256];
@@ -422,7 +423,7 @@ void CGameContext::EndVote(int Type, bool Force)
 	dumpjson("event", "voteend", "cmd", m_aVoteCommand, "reason", m_aVoteReason, "label", m_aVoteDescription, "type", Type, "force", Force?1:0);
 }
 
-void CGameContext::ForceVote(int Type, const char *pDescription, const char *pReason)
+void CGameContext::SendForceVote(int Type, const char *pDescription, const char *pReason)
 {
 	CNetMsg_Sv_VoteSet Msg;
 	Msg.m_Type = Type;
@@ -1021,7 +1022,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 							Server()->SetRconCID(ClientID);
 							Console()->ExecuteLine(aCmd);
 							Server()->SetRconCID(IServer::RCON_CID_SERV);
-							ForceVote(VOTE_START_OP, aDesc, pReason);
+							SendForceVote(VOTE_START_OP, aDesc, pReason);
 							return;
 						}
 						m_VoteType = VOTE_START_OP;
@@ -1092,7 +1093,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 					Server()->SetRconCID(ClientID);
 					Console()->ExecuteLine(aCmd);
 					Server()->SetRconCID(IServer::RCON_CID_SERV);
-					ForceVote(VOTE_START_SPEC, aDesc, pReason);
+					SendForceVote(VOTE_START_SPEC, aDesc, pReason);
 					return;
 				}
 				m_VoteType = VOTE_START_SPEC;
