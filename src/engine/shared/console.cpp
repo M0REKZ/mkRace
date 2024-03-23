@@ -397,7 +397,7 @@ void CConsole::ExecuteLineStroked(int Stroke, const char *pStr, int ClientID, bo
 				if(Result.m_pCommand[0] == '+')
 				{
 					// insert the stroke direction token
-					Result.AddArgument(m_paStrokeStr[Stroke]);
+					Result.AddArgument(m_apStrokeStr[Stroke]);
 					IsStrokeCommand = 1;
 				}
 
@@ -820,8 +820,8 @@ CConsole::CConsole(int FlagMask)
 	m_pRecycleList = 0;
 	m_TempCommands.Reset();
 	m_StoreCommands = true;
-	m_paStrokeStr[0] = "0";
-	m_paStrokeStr[1] = "1";
+	m_apStrokeStr[0] = "0";
+	m_apStrokeStr[1] = "1";
 	m_pTempMapListHeap = 0;
 	m_pFirstMapEntry = 0;
 	m_pLastMapEntry = 0;
