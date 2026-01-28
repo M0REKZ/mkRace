@@ -4,18 +4,11 @@
 #define GAME_CLIENT_COMPONENTS_MAPLAYERS_H
 #include <base/tl/array.h>
 #include <game/client/component.h>
-#include <game/client/components/auto_tile.h>
 
 class CMapLayers : public CComponent
 {
 	CLayers *m_pMenuLayers;
 	IEngineMap *m_pMenuMap;
-	// gamer
-	CTilesetPainter* m_pTilesetPainter;
-	CDoodadsPainter* m_pDoodadsPainter;
-	CTile* m_pTeleTiles;
-	CTile* m_pAutoTiles;
-	CTile* m_pAutoDoodads;
 
 	int m_Type;
 	float m_OnlineStartTime;
@@ -31,9 +24,6 @@ class CMapLayers : public CComponent
 
 	void LoadEnvPoints(const CLayers *pLayers, array<CEnvPoint>& lEnvPoints);
 	void LoadBackgroundMap();
-	void ReloadPainters();
-	void LoadPainters(CLayers *pLayers);
-	void LoadAutomapperRules(CLayers *pLayers, const char* pName);
 
 	void PlaceEasterEggs(const CLayers *pLayers);
 
@@ -53,8 +43,6 @@ public:
 	virtual void OnMapLoad();
 
 	static void ConchainBackgroundMap(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
-	static void ConchainAutomapperReload(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
-	static void Con_Automap(IConsole::IResult *pResult, void *pUserData);
 
 	virtual void OnConsoleInit();
 

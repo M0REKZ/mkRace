@@ -70,8 +70,6 @@ public:
 	void RenderQuads(const CQuad *pQuads, int NumQuads, int Flags, ENVELOPE_EVAL pfnEval, void *pUser);
 	void RenderTilemap(const CTile *pTiles, int w, int h, float Scale, vec4 Color, int RenderFlags, ENVELOPE_EVAL pfnEval, void *pUser, int ColorEnv, int ColorEnvOffset);
 
-	void RenderTeleOverlay(CTeleTile *pTele, int w, int h, float Scale);
-
 	// helpers
 	void MapScreenToWorld(float CenterX, float CenterY, float ParallaxX, float ParallaxY,
 		float OffsetX, float OffsetY, float Aspect, float Zoom, float aPoints[4]);

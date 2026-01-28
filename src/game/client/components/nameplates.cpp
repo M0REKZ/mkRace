@@ -19,7 +19,7 @@ void CNamePlates::RenderNameplate(
 	bool Predicted = m_pClient->ShouldUsePredicted() && m_pClient->ShouldUsePredictedChar(ClientID);
 	vec2 Position = m_pClient->GetCharPos(ClientID, Predicted);
 
-	float FontSize = 38.0f * Config()->m_ClNameplatesSize / 100.0f;
+	float FontSize = 18.0f + 20.0f * Config()->m_ClNameplatesSize / 100.0f;
 	// render name plate
 
 	float a = 1;

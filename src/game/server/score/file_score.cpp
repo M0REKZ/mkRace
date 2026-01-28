@@ -146,7 +146,7 @@ void CFileScore::OnMapLoad()
 		LineReader.Init(File);
 		CPlayerScore Tmp;
 		int LinesPerItem = 3;
-		char *pLine;
+		const char *pLine;
 		for(int LineCount = 0; (pLine = LineReader.Get()); LineCount++)
 		{
 			int Type = LineCount % LinesPerItem;

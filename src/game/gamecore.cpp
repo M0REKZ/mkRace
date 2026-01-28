@@ -93,8 +93,6 @@ void CCharacterCore::Reset()
 	m_Pos = vec2(0,0);
 	m_Vel = vec2(0,0);
 	m_NewHook = false;
-	m_IgnoreInteractVel = false;
-	m_InteractVel = vec2(0,0);
 	m_HookDragVel = vec2(0,0);
 	m_HookPos = vec2(0,0);
 	m_HookDir = vec2(0,0);

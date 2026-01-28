@@ -38,16 +38,7 @@ void CPlayers::RenderHook(
 
 	if(m_pClient->ShouldUsePredicted() && m_pClient->ShouldUsePredictedChar(ClientID))
 	{
-		if(!m_pClient->m_Snap.m_pLocalCharacter || m_pClient->IsWorldPaused())
-		{
-		}
-		else
-		{
-			// apply predicted results
-			m_pClient->m_PredictedChar.Write(&Player);
-			m_pClient->m_PredictedPrevChar.Write(&Prev);
-			IntraTick = Client()->PredIntraGameTick();
-		}
+		m_pClient->UsePredictedChar(&Prev, &Player, &IntraTick, ClientID);
 	}
 
 	vec2 Position = mix(vec2(Prev.m_X, Prev.m_Y), vec2(Player.m_X, Player.m_Y), IntraTick);
@@ -131,16 +122,7 @@ void CPlayers::RenderPlayer(
 
 	if(m_pClient->ShouldUsePredicted() && m_pClient->ShouldUsePredictedChar(ClientID))
 	{
-		if(!m_pClient->m_Snap.m_pLocalCharacter || WorldPaused)
-		{
-		}
-		else
-		{
-			// apply predicted results
-			m_pClient->m_PredictedChar.Write(&Player);
-			m_pClient->m_PredictedPrevChar.Write(&Prev);
-			IntraTick = Client()->PredIntraGameTick();
-		}
+		m_pClient->UsePredictedChar(&Prev, &Player, &IntraTick, ClientID);
 	}
 	const bool Paused = m_pClient->IsWorldPaused() || m_pClient->IsDemoPlaybackPaused();
 

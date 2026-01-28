@@ -494,17 +494,6 @@ void CGameContext::SendVoteOptions(int ClientID)
 	}
 }
 
-void CGameContext::SendTuningParams(int ClientID)
-{
-	CheckPureTuning();
-
-	CMsgPacker Msg(NETMSGTYPE_SV_TUNEPARAMS);
-	int *pParams = (int *)&m_Tuning;
-	for(unsigned i = 0; i < sizeof(m_Tuning)/sizeof(int); i++)
-		Msg.AddInt(pParams[i]);
-	Server()->SendMsg(&Msg, MSGFLAG_VITAL, ClientID);
-}
-
 void CGameContext::SendReadyToEnter(CPlayer *pPlayer)
 {
 	pPlayer->m_IsReadyToEnter = true;
@@ -1282,7 +1271,7 @@ void CGameContext::OnMessage(int MsgID, CUnpacker *pUnpacker, int ClientID)
 			if(pPlayer->m_LastKillTick && pPlayer->m_LastKillTick + Server()->TickSpeed() / 5 > Server()->Tick())
 				return;
 
-			pPlayer->m_LastKill = Server()->Tick();
+			pPlayer->m_LastKillTick = Server()->Tick();
 			if(Config()->m_SvSuicidePrevention)
 			{
 				CCharacter *pChar = pPlayer->GetCharacter();

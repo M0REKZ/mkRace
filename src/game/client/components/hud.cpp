@@ -1018,8 +1018,6 @@ void CHud::OnRender()
 		RenderStartCountdown();
 		RenderNetworkIssueNotification();
 		RenderDeadNotification();
-		RenderSuddenDeath();
-		//RenderScoreHud();
 		RenderScoreHud();
 		RenderWarmupTimer();
 		RenderFps();

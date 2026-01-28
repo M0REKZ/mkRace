@@ -436,7 +436,9 @@ int CMenus::DoBrowserEntry(const void *pID, CUIRect View, const CServerInfo *pEn
 {
 	// logic
 	int ReturnValue = 0;
+
 	const bool Hovered = UI()->MouseHovered(&View);
+	bool Highlighted = Hovered && (!pScroll || !pScroll->IsAnimating());
 
 	if(UI()->CheckActiveItem(pID))
 	{
@@ -453,7 +455,7 @@ int CMenus::DoBrowserEntry(const void *pID, CUIRect View, const CServerInfo *pEn
 			UI()->SetActiveItem(pID);
 	}
 
-	if(Hovered)
+	if(Highlighted)
 	{
 		UI()->SetHotItem(pID);
 		View.Draw(vec4(1.0f, 1.0f, 1.0f, 0.5f));
@@ -469,7 +471,7 @@ int CMenus::DoBrowserEntry(const void *pID, CUIRect View, const CServerInfo *pEn
 	vec4 TextBaseOutlineColor = vec4(0.0, 0.0, 0.0, 0.3f);
 	vec4 ServerInfoTextBaseColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vec4 HighlightColor = vec4(TextHighlightColor.r, TextHighlightColor.g, TextHighlightColor.b, TextAlpha);
-	if(Selected || Hovered)
+	if(Selected || Highlighted)
 	{
 		TextBaseColor = vec4(0.0f, 0.0f, 0.0f, TextAlpha);
 		ServerInfoTextBaseColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -594,7 +596,7 @@ int CMenus::DoBrowserEntry(const void *pID, CUIRect View, const CServerInfo *pEn
 			const int Ping = pEntry->m_Latency;
 
 			vec4 Color;
-			if(Selected || Hovered)
+			if(Selected || Highlighted)
 			{
 				Color = TextBaseColor;
 			}

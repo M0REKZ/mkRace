@@ -3,7 +3,6 @@
 #include <math.h>
 #include <base/math.h>
 #include <engine/graphics.h>
-#include <engine/textrender.h>
 
 #include "render.h"
 

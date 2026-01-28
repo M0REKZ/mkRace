@@ -143,7 +143,7 @@ int CSkins::SkinScan(const char *pName, int IsDir, int DirType, void *pUser)
 	const json_value *pJsonData = JsonParser.ParseFile(aBuf, pSelf->Storage());
 	if(pJsonData == 0)
 	{
-		str_format(aBuf, sizeof(aBuf), "failed to load skin '%s': %s", pName, aError);
+		str_format(aBuf, sizeof(aBuf), "failed to load skin '%s': %s", pName, JsonParser.Error());
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "skins", aBuf);
 		return 0;
 	}

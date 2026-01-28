@@ -1424,8 +1424,6 @@ if(CLIENT)
     animstate.cpp
     animstate.h
     component.h
-	components/auto_tile.cpp
-    components/auto_tile.h
     components/binds.cpp
     components/binds.h
     components/broadcast.cpp

@@ -332,7 +332,7 @@ void CMenus::RenderSkinSelection(CUIRect MainView)
 	int OldSelected = -1;
 	s_ListBox.DoHeader(&MainView, Localize("Skins"), UI()->GetListHeaderHeight());
 	m_RefreshSkinSelector = s_ListBox.DoFilter();
-	s_ListBox.DoStart(60.0f, s_paSkinList.size(), 10, OldSelected);
+	s_ListBox.DoStart(60.0f, s_paSkinList.size(), 10, 1, OldSelected);
 
 	for(int i = 0; i < s_paSkinList.size(); ++i)
 	{
