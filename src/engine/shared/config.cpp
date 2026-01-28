@@ -70,9 +70,9 @@ void CConfigManager::Reset()
 
 void CConfigManager::Reset(int FilterFlags)
 {
-	#define MACRO_CONFIG_INT(Name,ScriptName,def,min,max,flags,desc) m_Values.m_##Name = def;
-	#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags,desc) str_copy(m_Values.m_##Name, def, len);
-	#define MACRO_CONFIG_UTF8STR(Name,ScriptName,size,len,def,flags,desc) str_utf8_copy_num(m_Values.m_##Name, def, size, len);
+	#define MACRO_CONFIG_INT(Name,ScriptName,def,min,max,flags,desc) if((flags)&FilterFlags) m_Values.m_##Name = def;
+	#define MACRO_CONFIG_STR(Name,ScriptName,len,def,flags,desc) if((flags)&FilterFlags) str_copy(m_Values.m_##Name, def, len);
+	#define MACRO_CONFIG_UTF8STR(Name,ScriptName,size,len,def,flags,desc) if((flags)&FilterFlags) str_utf8_copy_num(m_Values.m_##Name, def, size, len);
 
 	#include "config_variables.h"
 
