@@ -11,7 +11,7 @@
 
 CGameControllerRACE::CGameControllerRACE(class CGameContext *pGameServer) : IGameController(pGameServer)
 {
-	m_pGameType = "mkRace";
+	m_pGameType = "Golf";
 	
 	for(int i = 0; i < MAX_CLIENTS; i++)
 		m_aRace[i].Reset();

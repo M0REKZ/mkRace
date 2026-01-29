@@ -12,6 +12,7 @@
 #include "character.h"
 #include "laser.h"
 #include "projectile.h"
+#include "kz/golfball.h"
 
 //input count
 struct CInputCount
@@ -487,8 +488,12 @@ void CCharacter::FireWeapon()
 
 		case WEAPON_LASER:
 		{
-			new CLaser(GameWorld(), m_Pos, Direction, GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID(), WEAPON_LASER);
-			GameServer()->CreateSound(m_Pos, SOUND_LASER_FIRE, CmaskRace(GameServer(), m_pPlayer->GetCID()));
+			if(!GameWorld()->FindFirst(CGameWorld::KZ_ENTTYPE_GOLFBALL) ||
+				(GameWorld()->FindFirst(CGameWorld::KZ_ENTTYPE_GOLFBALL) && ((CGolfBall *)GameWorld()->FindFirst(CGameWorld::KZ_ENTTYPE_GOLFBALL))->GetOwner() != m_pPlayer->GetCID()))
+			{
+				new CGolfBall(GameWorld(), m_Pos, Direction, GameServer()->Tuning()->m_LaserReach, m_pPlayer->GetCID(), WEAPON_LASER);
+				GameServer()->CreateSound(m_Pos, SOUND_LASER_FIRE, CmaskRace(GameServer(), m_pPlayer->GetCID()));
+			}
 		} break;
 
 		case WEAPON_NINJA:
@@ -760,7 +765,7 @@ void CCharacter::TickDefered()
 		m_Core.Write(&Current);
 
 		// only allow dead reackoning for a top of 3 seconds
-		if(m_Core.m_pReset || m_ReckoningTick+Server()->TickSpeed()*3 < Server()->Tick() || mem_comp(&Predicted, &Current, sizeof(CNetObj_Character)) != 0)
+		//if(m_Core.m_pReset || m_ReckoningTick+Server()->TickSpeed()*3 < Server()->Tick() || mem_comp(&Predicted, &Current, sizeof(CNetObj_Character)) != 0)
 		{
 			m_ReckoningTick = Server()->Tick();
 			m_SendCore = m_Core;

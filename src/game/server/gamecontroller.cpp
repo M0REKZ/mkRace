@@ -255,8 +255,7 @@ void IGameController::OnCharacterSpawn(CCharacter *pChr)
 	pChr->IncreaseHealth(10);
 
 	// give default weapons
-	pChr->GiveWeapon(WEAPON_HAMMER, -1);
-	pChr->GiveWeapon(WEAPON_GUN, 10);
+	pChr->GiveWeapon(WEAPON_LASER, -1);
 }
 
 void IGameController::OnFlagReturn(CFlag *pFlag)
