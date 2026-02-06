@@ -856,6 +856,24 @@ void IGameController::DoSnap(int SnappingClient, int GameStartTick)
 		pGameInfo->m_MatchNum = m_GameInfo.m_MatchNum;
 		pGameInfo->m_MatchCurrent = m_GameInfo.m_MatchCurrent;
 	}
+
+	CNetObj_GameInfoEx *pGameInfoEx = static_cast<CNetObj_GameInfoEx *>(Server()->SnapNewItem(NETOBJTYPE_GAMEINFOEX, 0, sizeof(CNetObj_GameInfoEx)));
+	if(!pGameInfoEx)
+		return;
+
+	pGameInfoEx->m_Flags = 0;
+	pGameInfoEx->m_Version = 8;
+	pGameInfoEx->m_Flags2 = 0;
+
+	pGameInfoEx->m_Flags |=
+	GAMEINFOFLAG_ALLOW_ZOOM |
+	GAMEINFOFLAG_ALLOW_EYE_WHEEL |
+	GAMEINFOFLAG_RACE |
+	GAMEINFOFLAG_ENTITIES_DDRACE |
+	GAMEINFOFLAG_PREDICT_DDRACE |
+	GAMEINFOFLAG_ENTITIES_DDNET |
+	GAMEINFOFLAG_ALLOW_HOOK_COLL;
+
 }
 
 void IGameController::Tick()

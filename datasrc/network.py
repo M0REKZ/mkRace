@@ -19,7 +19,22 @@ GameMsgIDs = Enum("GAMEMSG", ["TEAM_SWAP", "SPEC_INVALID_ID", "TEAM_SHUFFLE", "T
 							"CTF_CAPTURE",
 
 							"GAME_PAUSED"]) # todo 0.8: sort (1 para)
-
+GameInfoFlags = Flags("GAMEINFOFLAG", [
+	"TIMESCORE", "GAMETYPE_RACE", "GAMETYPE_FASTCAP", "GAMETYPE_FNG",
+	"GAMETYPE_DDRACE", "GAMETYPE_DDNET", "GAMETYPE_BLOCK_WORLDS",
+	"GAMETYPE_VANILLA", "GAMETYPE_PLUS", "FLAG_STARTS_RACE", "RACE",
+	"UNLIMITED_AMMO", "DDRACE_RECORD_MESSAGE", "RACE_RECORD_MESSAGE",
+	"ALLOW_EYE_WHEEL", "ALLOW_HOOK_COLL", "ALLOW_ZOOM", "BUG_DDRACE_GHOST",
+	"BUG_DDRACE_INPUT", "BUG_FNG_LASER_RANGE", "BUG_VANILLA_BOUNCE",
+	"PREDICT_FNG", "PREDICT_DDRACE", "PREDICT_DDRACE_TILES", "PREDICT_VANILLA",
+	"ENTITIES_DDNET", "ENTITIES_DDRACE", "ENTITIES_RACE", "ENTITIES_FNG",
+	"ENTITIES_VANILLA", "DONT_MASK_ENTITIES", "ENTITIES_BW"
+	# Full, use GameInfoFlags2 for more flags
+])
+GameInfoFlags2 = Flags("GAMEINFOFLAG2", [
+	"ALLOW_X_SKINS", "GAMETYPE_CITY", "GAMETYPE_FDDRACE", "ENTITIES_FDDRACE", "HUD_HEALTH_ARMOR", "HUD_AMMO",
+	"HUD_DDRACE", "NO_WEAK_HOOK_AND_BOUNCE"
+])
 
 RawHeader = '''
 
@@ -82,6 +97,8 @@ Flags = [
 	GameStateFlags,
 	CoreEventFlags,
 	RaceFlags,
+	GameInfoFlags,
+	GameInfoFlags2,
 ]
 
 Objects = [
@@ -276,6 +293,12 @@ Objects = [
 
 	NetObjectEx("MyOwnEvent", "my-own-event@heinrich5991.de", [
 		NetIntAny("m_Test"),
+	]),
+ 
+	NetObjectEx("GameInfoEx", "gameinfo@netobj.ddnet.tw", [
+		NetIntAny("m_Flags", default=0),
+		NetIntAny("m_Version", default=8),
+		NetIntAny("m_Flags2", default=0),
 	]),
 ]
 

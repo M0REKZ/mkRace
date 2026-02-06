@@ -28,6 +28,7 @@ void CGameControllerRACE::OnCharacterSpawn(CCharacter *pChr)
 	IGameController::OnCharacterSpawn(pChr);
 
 	ResetPickups(pChr->GetPlayer()->GetCID());
+	pChr->SetActiveWeapon(WEAPON_LASER);
 }
 
 int CGameControllerRACE::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
