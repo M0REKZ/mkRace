@@ -124,7 +124,7 @@ void CGolfBall::TickPaused()
 
 void CGolfBall::Snap(int SnappingClient)
 {
-	if((NetworkClipped(SnappingClient) && NetworkClipped(SnappingClient, m_From)) || !CheckShowOthers(SnappingClient, m_Owner))
+	if(!CheckShowOthers(SnappingClient, m_Owner))
 		return;
 
 	CNetObj_Laser *pObj = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, GetID(), sizeof(CNetObj_Laser)));
